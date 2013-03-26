@@ -21,7 +21,7 @@ Here is a simple implementation of a WebSocket echo server operating on port 800
 			/** to send to all connected clients:
 			 * foreach($this->users as $user) $user->send($msg);
 			 */
-			$user -> send($msg");
+			$user -> send($msg);
 		}
 	}
 
