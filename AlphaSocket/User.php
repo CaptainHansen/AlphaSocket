@@ -44,7 +44,7 @@ class User {
 	}
 	
 	public function send($msg){
-		\WebSocket\Log::log("> ".$msg,1);
+		\AlphaSocket\Log::log("> ".$msg,1);
 		$msg = $this->wrap($msg);
 		socket_write($this->socket,$msg,strlen($msg));
 	}

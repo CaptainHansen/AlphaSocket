@@ -9,7 +9,7 @@ class V_13 extends VersionTemplate {
 
 	public function openHandshake($socket,$headers){
 		list($resource,$host,$origin,$key) = $headers;
-		\WebSocket\Log::log("Handshaking - Version 13 ...",2);
+		\AlphaSocket\Log::log("Handshaking - Version 13 ...",2);
 		
 		$key.="258EAFA5-E914-47DA-95CA-C5AB0DC85B11";  //WebSocket version 13 GUID
 		$key = sha1($key);
@@ -20,12 +20,12 @@ class V_13 extends VersionTemplate {
 					"Upgrade: WebSocket\r\n" .
 					"Connection: Upgrade\r\n" .
 					"Sec-WebSocket-Accept: {$key}\r\n" .
-					"Server: PHP WebSocket Server\r\n\r\n";
+					"Server: AlphaSocket WebSocket Server\r\n\r\n";
 		
 		socket_write($socket,$upgrade,strlen($upgrade));
 		$this -> handshake = true;
-		\WebSocket\Log::log($upgrade,3);
-		\WebSocket\Log::log("Done handshaking...",2);
+		\AlphaSocket\Log::log($upgrade,3);
+		\AlphaSocket\Log::log("Done handshaking...",2);
 		return true;
 	}
 	
@@ -54,15 +54,15 @@ class V_13 extends VersionTemplate {
 */
 	
 	public function unwrap($msg){
-		\WebSocket\Log::log("\n\nUNWRAPPING V.13 DATA",2);
+		\AlphaSocket\Log::log("\n\nUNWRAPPING V.13 DATA",2);
 		//doing bitwise stuff with PHP is going to SUUUCCCCCKKKKKKKKKK
 		$test = unpack("H*",$msg);
-		\WebSocket\Log::log("Data: ".$test[1],3);
+		\AlphaSocket\Log::log("Data: ".$test[1],3);
 		
 		$next = 0;
 		$fin = ord(substr($msg,$next,1));
 		if(($fin >> 7) != 1){
-			\WebSocket\Log::log("This is NOT the last frame....",2);
+			\AlphaSocket\Log::log("This is NOT the last frame....",2);
 		}
 		switch($fin & 15) {
 		case 1:
@@ -76,7 +76,7 @@ class V_13 extends VersionTemplate {
 			return false;
 			
 		default:
-			\WebSocket\Log::log("A different opcode was selected other than TEXT. - ".($fin & 15)." - must disconnect (not implemented!)",2);
+			\AlphaSocket\Log::log("A different opcode was selected other than TEXT. - ".($fin & 15)." - must disconnect (not implemented!)",2);
 			return false;
 		}
 		
@@ -84,7 +84,7 @@ class V_13 extends VersionTemplate {
 		$mpay = ord(substr($msg,$next,1));
 		if(($mpay >> 7) != 1){
 			$mask = true;
-			\WebSocket\Log::log("Data is NOT masked - this is NOT OK.",0);
+			\AlphaSocket\Log::log("Data is NOT masked - this is NOT OK.",0);
 		} else {
 			$mask = false;
 		}
@@ -102,7 +102,7 @@ class V_13 extends VersionTemplate {
 			}
 			$next += $len;
 		}
-		\WebSocket\Log::log("Detected payload length = $paylen",2);
+		\AlphaSocket\Log::log("Detected payload length = $paylen",2);
 		
 		$mask_d = array();	//putting the mask into an array to make decoding easier
 		for($i = 0; $i <= 3; $i ++){
@@ -136,9 +136,9 @@ class V_13 extends VersionTemplate {
 		} else {
 			$header .= pack("C",$len);
 		}
-		\WebSocket\Log::log("Length of response text - $len",2);
+		\AlphaSocket\Log::log("Length of response text - $len",2);
 		$hex_head = unpack("H*",$header.$msg);
-		\WebSocket\Log::log("Data: ".$hex_head[1],3);
+		\AlphaSocket\Log::log("Data: ".$hex_head[1],3);
 		
 		return($header.$msg);
 	}

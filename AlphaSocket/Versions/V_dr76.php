@@ -9,7 +9,7 @@ class V_dr76 extends VersionTemplate {
 
 	public function openHandshake($socket,$headers){
 		list($resource,$host,$origin,$strkey1,$strkey2,$data) = $headers;
-		\WebSocket\Log::log("Handshaking - Version #76 ...",2);
+		\AlphaSocket\Log::log("Handshaking - Version #76 ...",2);
 		
 		$pattern = '/[^\d]*/';
 		$replacement = '';
@@ -23,7 +23,7 @@ class V_dr76 extends VersionTemplate {
 	
 		if ($spaces1 == 0 || $spaces2 == 0 || $numkey1 % $spaces1 != 0 || $numkey2 % $spaces2 != 0) {
 			socket_close($this->socket);
-			\WebSocket\Log::log('Handshake Failed!',0);
+			\AlphaSocket\Log::log('Handshake Failed!',0);
 			return false;
 		}
 	
@@ -43,8 +43,8 @@ class V_dr76 extends VersionTemplate {
 		
 		socket_write($socket,$upgrade.chr(0),strlen($upgrade.chr(0)));
 		$this->handshake=true;
-		\WebSocket\Log::log($upgrade,3);
-		\WebSocket\Log::log("Done handshaking...",2);
+		\AlphaSocket\Log::log($upgrade,3);
+		\AlphaSocket\Log::log("Done handshaking...",2);
 		return true;
 	}
 	

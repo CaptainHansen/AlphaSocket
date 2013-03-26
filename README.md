@@ -12,7 +12,7 @@ Here is a simple implementation of a WebSocket echo server operating on port 800
 	<?
 	include("autoload.php");
 
-	class WS_Echo extends \WebSocket\Server {
+	class WS_Echo extends \AlphaSocket\Server {
 		//IP address of client =				$this -> address;
 		//hostname of client (if enabled) =		$this -> hostname;
 		//array of ALL connected users = 		$this -> users;
@@ -32,7 +32,7 @@ Here is a simple implementation of a WebSocket echo server operating on port 800
 	 * 3 - Log handhake information (including the actual headers), and the hex data received/sent
 	 */
 	 
-	\WebSocket\Log::setDebugLevel(1);	//Log Messages and some errors
+	\AlphaSocket\Log::setDebugLevel(1);	//Log Messages and some errors
 
 	/** creating the server:
 	 * "0.0.0.0"	<- address to listen on (this means all interfaces and addresses)
