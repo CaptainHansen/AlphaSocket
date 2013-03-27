@@ -54,9 +54,12 @@ abstract class Server {
 							}
 							
 						} else {
-							$action = $user->unwrap($buffer);
-							Log::log("< ".$action,1);
-							$this -> Process($user,$action);
+							if(!($action = $user->unwrap($buffer))){
+								$this -> Disconnect($user -> socket);
+							} else {
+								Log::log("< ".$action,1);
+								$this -> Process($user,$action);
+							}
 						}
 					}
 				}
