@@ -71,8 +71,7 @@ class V_13 extends VersionTemplate {
 			
 		case 8:
 			//client wishes to disconnect.
-			console("Disconnect request received - must disconnect (not implemented!).");
-			$this -> disconnect($msg);
+			\AlphaSocket\Log::log("Disconnect request received - must disconnect (not implemented!).");
 			return false;
 			
 		default:
