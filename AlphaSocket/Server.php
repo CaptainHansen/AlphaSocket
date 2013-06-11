@@ -87,7 +87,7 @@ abstract class Server {
 
 		array_push($this->users,$user);
 		array_push($this->sockets,$socket);
-		Log::log($socket." CONNECTED!",1);
+		Log::log($user->address." CONNECTED!",1);
 	}
 	
 	abstract protected function Process($user,$action);
