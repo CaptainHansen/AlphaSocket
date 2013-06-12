@@ -1,6 +1,8 @@
 <?
 namespace AlphaSocket;
 
+define('AS_TYPE','SERVER');
+
 error_reporting(E_ALL);
 set_time_limit(0);
 ob_implicit_flush();
@@ -38,40 +40,37 @@ abstract class Server {
 						$this -> Connect($client);
 					}
 				} else {
-					$bytes = @socket_recv($socket,$buffer,2048,0);
-					if($bytes==0){
-						Log::log("We got nothing from client, they just disconnected.",1);
-						$this -> Disconnect($socket);
+					$user = $this -> getuserbysocket($socket);
+					if(!$user -> checkHandshake()){
+						$hshake = ($user -> doHandshake());
+						if(!$hshake) {
+							socket_close($socket);
+							$this -> finishDisconnect($socket);
+						}
 					} else {
-						$user = $this -> getuserbysocket($socket);
-						if(!$user->checkHandshake()){
-							list($headers,$vers) = VersionDetector::getInfo($buffer);
-							
-							if($user -> setVers($vers)){
-								if(!($user -> doHandshake($headers))) $this->Disconnect($user->socket);
-							} else {
-								$this -> cancel_handshake($user->socket,$vers);
-							}
-							
+						$bytes = @socket_recv($socket,$buf,2,MSG_PEEK);
+						if($bytes == 0){
+							Log::log("Connection Terminated.",1);
+							socket_close($socket);
+							$this -> finishDisconnect($socket);
 						} else {
-							if(!($action = $user->unwrap($buffer))){
-								$this -> Disconnect($user -> socket);
+							list($data,$bytes,$disconnect) = $user -> Receive();
+							if($disconnect){
+								Log::log("Client Disconnected.",1);
+								$this -> finishDisconnect($socket);
 							} else {
-								Log::log("< ".$action,1);
-								$this -> Process($user,$action);
+								$this -> Process($user,$data);
 							}
 						}
 					}
+				
 				}
+			
 			}
 		}
 	}
 	
-	private function cancel_handshake($socket,$vers){
-		$response = "HTTP/1.1 501 Not Implemented\r\n";
-		socket_write($socket,$response.chr(0),strlen($response.chr(0)));
-		Log::log($response,3);
-		Log::log("Handshake Aborted - WebSocket Version in use by client is not implemented. - ($vers)",2);
+	private function cancel_handshake($vers){
 		$this -> Disconnect($socket);
 	}
 	
@@ -92,7 +91,7 @@ abstract class Server {
 	
 	abstract protected function Process($user,$action);
 
-	private function Disconnect($socket){
+	private function finishDisconnect($socket){
 		$found=null;
 		$n=count($this->users);
 		for($i=0;$i<$n;$i++){
@@ -105,7 +104,8 @@ abstract class Server {
 			array_splice($this->users,$found,1);
 		}
 		$index = array_search($socket,$this->sockets);
-		socket_close($socket);
+//		socket_close($socket);
+		
 		Log::log($socket." DISCONNECTED!",1);
 		if($index>=0){
 			array_splice($this->sockets,$index,1);

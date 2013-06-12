@@ -21,7 +21,7 @@ class User {
 		return false;
 	}
 	
-	public function setVers($vers){
+	private function setVers($vers){
 		switch($vers){
 		case '13':
 			$this->ws_driver = new Versions\V_13($this->socket);
@@ -35,25 +35,42 @@ class User {
 		return true;
 	}
 	
-	public function doHandshake($headers){
-		if(!is_null($this->ws_driver)){
-			return $this->ws_driver->openHandshake($this->socket,$headers);
+	public function doHandshake(){
+		$buffer = "";
+		$bytes = @socket_recv($this -> socket,$buffer,2048,0);
+		
+		list($headers,$vers) = VersionDetector::getInfo($buffer);
+		if($this -> setVers($vers)){
+			if(!is_null($this->ws_driver)){
+				return $this->ws_driver->serverRespondHandshake($headers);
+			} else {
+				return false;
+			}
 		} else {
+			$this -> cancelHandshake($vers);
 			return false;
 		}
 	}
 	
-	public function send($msg){
+	private function cancelHandshake($vers){
+		$response = "HTTP/1.1 501 Not Implemented\r\n";
+		socket_write($this -> socket,$response.chr(0),strlen($response.chr(0)));
+		Log::log($response,3);
+		Log::log("Handshake Aborted - WebSocket Version in use by client is not implemented. - ($vers)",2);
+	}
+	
+	public function Send($msg){
 		\AlphaSocket\Log::log("> ".$msg,1);
-		$msg = $this->wrap($msg);
-		socket_write($this->socket,$msg,strlen($msg));
+		$msg = $this->ws_driver->Send($msg);
 	}
 	
-	public function unwrap($msg){
-		return $this->ws_driver->unwrap($msg);
+	public function Receive(){
+		$rcvd = $this -> ws_driver -> Receive();
+		\AlphaSocket\Log::log("< ".$rcvd[0],1);
+		return $rcvd;
 	}
 	
-	private function wrap($msg){
-		return $this->ws_driver->wrap($msg);
+	public function Disconnect($msg){
+		return $this -> ws_driver -> Disconnect($msg);
 	}
 }

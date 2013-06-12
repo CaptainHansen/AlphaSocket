@@ -11,7 +11,12 @@ class Log {
 	public static function log($message,$level){	//setting level = to 0 has NO effect.
 		if(self::$debug == 0) return;	//all messages disabled by default
 		if(self::$debug >= $level){
-			echo $message."\n";
+			if(self::$debug >= 2){
+				$trace = debug_backtrace();
+				echo $trace[1]['class']."::".$trace[1]['function']." - ".$message."\n";
+			} else {
+				echo $message."\n";
+			}
 		}
 	}
 }

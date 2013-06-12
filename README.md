@@ -20,9 +20,9 @@ class WS_Echo extends \AlphaSocket\Server {
 		
 	protected function Process($user,$msg){
 		/** to send to all connected clients:
-		 * foreach($this->users as $user) $user->send($msg);
+		 * foreach($this->users as $user) $user->Send($msg);
 		 */
-		$user -> send($msg);
+		$user -> Send($msg);
 	}
 }
 

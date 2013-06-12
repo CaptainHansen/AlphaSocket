@@ -7,7 +7,7 @@ class V_dr76 extends VersionTemplate {
 		parent::__construct($socket,'dr76');
 	}
 
-	public function openHandshake($socket,$headers){
+	public function openHandshake($headers){
 		list($resource,$host,$origin,$strkey1,$strkey2,$data) = $headers;
 		\AlphaSocket\Log::log("Handshaking - Version #76 ...",2);
 		
@@ -41,7 +41,7 @@ class V_dr76 extends VersionTemplate {
 				  "\r\n" .
 				  $hash_data;
 		
-		socket_write($socket,$upgrade.chr(0),strlen($upgrade.chr(0)));
+		socket_write($this -> socket,$upgrade.chr(0),strlen($upgrade.chr(0)));
 		$this->handshake=true;
 		\AlphaSocket\Log::log($upgrade,3);
 		\AlphaSocket\Log::log("Done handshaking...",2);

@@ -19,8 +19,10 @@ abstract class VersionTemplate {
 		return $this -> handshake;
 	}
 	
-	abstract public function openHandshake($socket,$headers);
-	abstract public function unwrap($msg);
-	abstract public function wrap($msg);
+	abstract public function clientInitHandshake($host);
+	abstract public function serverRespondHandshake($headers);
+	abstract public function clientVerifyHandshake($headers);
+	abstract public function Receive();
+	abstract public function Send($msg);
 }
 		
