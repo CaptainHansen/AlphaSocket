@@ -2,13 +2,29 @@
 namespace AlphaSocket;
 
 class User {
-	public $stored_data;
+	private $stored_data;
 
 	public $socket;
 	public $ws_driver;
 	
 	public $address;
 	public $port;
+	
+
+	///STORED DATA FUNCTIONS////
+	public function getData($fdp){
+		if(isset($this -> stored_data[$fdp])){
+			return $this -> stored_data[$fdp];
+		} else {
+			return null;
+		}
+	}
+	
+	public function setData($fdp,$data){
+		return $this -> stored_data[$fdp] = $data;
+	}
+	//////////
+
 	
 	public function __construct($socket){
 		$this -> socket = $socket;
