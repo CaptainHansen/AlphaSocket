@@ -43,6 +43,7 @@ class Client {
 		
 		//now that the websocket connection has been established, we need to make a socket connection here on the localhost
 		$lsock = socket_create(AF_UNIX,SOCK_STREAM,0)				or exit(1);
+		if(file_exists($lsock_f)) unlink($lsock_f);
 		socket_bind($lsock,$lsock_f)						or exit(2);
 		socket_listen($lsock);
 		

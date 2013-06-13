@@ -60,13 +60,13 @@ class User {
 	}
 	
 	public function Send($msg){
-		\AlphaSocket\Log::log("> ".$msg,1);
+		\AlphaSocket\Log::log($this->address.":".$this->port." > ".$msg,1);
 		$msg = $this->ws_driver->Send($msg);
 	}
 	
 	public function Receive(){
 		$rcvd = $this -> ws_driver -> Receive();
-		\AlphaSocket\Log::log("< ".$rcvd[0],1);
+		\AlphaSocket\Log::log($this->address.":".$this->port." < ".$rcvd[0],1);
 		return $rcvd;
 	}
 	

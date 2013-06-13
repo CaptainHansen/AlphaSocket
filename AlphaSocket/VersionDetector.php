@@ -5,14 +5,15 @@ class VersionDetector {
 	static function getInfo($req){
 		$ret = array();
 		if(!preg_match("/Sec-WebSocket-Version: (.*)\r\n/",$req,$match)){
-			$vers = '#76';
-			$regexes = array(
-				"/GET (.*) HTTP/",
-				"/Host: (.*)\r\n/",
-				"/Origin: (.*)\r\n/",
-				"/Sec-WebSocket-Key1: (.*)\r\n/",
-				"/Sec-WebSocket-Key2: (.*)\r\n/",
-				"/\r\n(.*?)\$/");
+//			$vers = '#76';
+//			$regexes = array(
+//				"/GET (.*) HTTP/",
+//				"/Host: (.*)\r\n/",
+//				"/Origin: (.*)\r\n/",
+//				"/Sec-WebSocket-Key1: (.*)\r\n/",
+//				"/Sec-WebSocket-Key2: (.*)\r\n/",
+//				"/\r\n(.*?)\$/");
+			return false;
 		} else {
 			$vers = $match[1];
 			$regexes = array(
